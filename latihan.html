@@ -1,172 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Latihan Soal - JFT Basic A2 Prep</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latihan</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-green-600 text-white p-5 rounded-b-3xl shadow-lg">
-    <h1 class="text-xl font-bold">Latihan Soal</h1>
-    <p class="text-sm opacity-90">Model JFT Basic A2</p>
-  </header>
+<header class="bg-green-600 text-white p-4 rounded-b-3xl">
+<h1 class="text-lg font-bold">Latihan Soal</h1>
+</header>
 
-  <!-- Content -->
-  <main class="flex-1 p-4">
+<main class="p-4">
+<div id="questionBox" class="bg-white p-5 rounded-2xl shadow"></div>
+</main>
 
-    <!-- Score -->
-    <div class="bg-white p-4 rounded-2xl shadow mb-4 flex justify-between items-center">
-      <span class="font-semibold">Skor:</span>
-      <span id="scoreText" class="text-green-600 font-bold">0</span>
-    </div>
-
-    <!-- Question Card -->
-    <div class="bg-white p-5 rounded-2xl shadow-md">
-
-      <p id="questionNumber" class="text-sm text-gray-500 mb-2"></p>
-
-      <h2 id="questionText" class="text-lg font-semibold mb-4"></h2>
-
-      <div id="optionsContainer" class="space-y-3"></div>
-
-      <!-- Pembahasan -->
-      <div id="explanationBox"
-           class="hidden mt-5 p-4 rounded-xl bg-blue-50 border border-blue-200">
-        <p class="font-semibold text-blue-700 mb-1">Pembahasan:</p>
-        <p id="explanationText" class="text-sm"></p>
-      </div>
-
-      <!-- Navigation -->
-      <div class="flex justify-between mt-6">
-        <button id="prevBtn"
-                class="px-4 py-2 rounded-xl bg-gray-200 text-gray-600">
-          Previous
-        </button>
-
-        <button id="nextBtn"
-                class="px-4 py-2 rounded-xl bg-green-600 text-white">
-          Next
-        </button>
-      </div>
-
-    </div>
-
-  </main>
-
-<script>
-const questions = [
-  {
-    question: "Arti dari 行きます adalah...",
-    options: ["Datang", "Pergi", "Makan", "Melihat"],
-    answer: 1,
-    explanation: "行きます (いきます) berarti 'pergi'."
-  },
-  {
-    question: "Kalimat yang benar untuk 'Saya makan roti' adalah...",
-    options: [
-      "パンを食べます。",
-      "パンに食べます。",
-      "パンが食べます。",
-      "パンへ食べます。"
-    ],
-    answer: 0,
-    explanation: "Partikel を digunakan sebagai objek langsung."
-  }
-];
-
-let currentQuestion = 0;
-let score = 0;
-let answered = false;
-
-function shuffle(array) {
-  return array.sort(() => Math.random() - 0.5);
-}
-
-shuffle(questions);
-
-const questionText = document.getElementById("questionText");
-const optionsContainer = document.getElementById("optionsContainer");
-const explanationBox = document.getElementById("explanationBox");
-const explanationText = document.getElementById("explanationText");
-const scoreText = document.getElementById("scoreText");
-const questionNumber = document.getElementById("questionNumber");
-
-function loadQuestion() {
-  answered = false;
-  explanationBox.classList.add("hidden");
-
-  const q = questions[currentQuestion];
-  questionNumber.innerText = `Soal ${currentQuestion + 1} dari ${questions.length}`;
-  questionText.innerText = q.question;
-
-  optionsContainer.innerHTML = "";
-
-  q.options.forEach((option, index) => {
-    const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.className =
-      "w-full p-3 rounded-xl border text-left hover:bg-gray-100 transition";
-
-    btn.onclick = () => selectAnswer(index, btn);
-
-    optionsContainer.appendChild(btn);
-  });
-}
-
-function selectAnswer(index, btn) {
-  if (answered) return;
-
-  answered = true;
-  const correct = questions[currentQuestion].answer;
-
-  const buttons = optionsContainer.querySelectorAll("button");
-
-  buttons.forEach((button, i) => {
-    if (i === correct) {
-      button.classList.add("bg-green-500", "text-white");
-    } else if (i === index) {
-      button.classList.add("bg-red-500", "text-white");
-    }
-    button.disabled = true;
-  });
-
-  if (index === correct) {
-    score++;
-    scoreText.innerText = score;
-  }
-
-  explanationText.innerText = questions[currentQuestion].explanation;
-  explanationBox.classList.remove("hidden");
-}
-
-document.getElementById("nextBtn").onclick = () => {
-  if (currentQuestion < questions.length - 1) {
-    currentQuestion++;
-    loadQuestion();
-  } else {
-    alert("Latihan selesai! Skor akhir: " + score);
-  }
-};
-
-document.getElementById("prevBtn").onclick = () => {
-  if (currentQuestion > 0) {
-    currentQuestion--;
-    loadQuestion();
-  }
-};
-
-loadQuestion();
-</script>
-
+<script src="js/data.js"></script>
+<script src="js/latihan.js"></script>
 </body>
 </html>
