@@ -1,133 +1,37 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JFT Basic A2 Prep</title>
-
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
-    <h1 class="text-2xl font-bold">JFT Basic A2 Prep</h1>
-    <p class="text-sm opacity-90">Persiapan Ujian JFT Basic A2</p>
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+  <h1 class="text-2xl font-bold">JFT Basic A2 Prep</h1>
+  <p class="text-sm">Persiapan Ujian A2</p>
+</header>
 
-    <!-- Progress -->
-    <div class="mt-4">
-      <div class="flex justify-between text-xs mb-1">
-        <span>Progress Belajar</span>
-        <span id="progressText">35%</span>
-      </div>
-      <div class="w-full bg-blue-400/40 rounded-full h-3">
-        <div id="progressBar"
-             class="bg-white h-3 rounded-full transition-all duration-500"
-             style="width: 35%;">
-        </div>
-      </div>
-    </div>
-  </header>
+<main class="flex-1 p-5 space-y-4">
 
-  <!-- Main Content -->
-  <main class="flex-1 p-5 space-y-4">
+<a href="vocab.html" class="block bg-white p-5 rounded-2xl shadow">
+  📚 Kumpulan Kosakata
+</a>
 
-    <!-- Menu Card 1 -->
-    <a href="vocab.html" class="block">
-      <div class="bg-white p-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-4">
-        <div class="bg-blue-100 text-blue-600 p-3 rounded-xl text-xl">
-          📚
-        </div>
-        <div>
-          <h2 class="font-semibold text-lg">Kumpulan Kosakata</h2>
-          <p class="text-sm text-gray-500">Belajar kosakata level A2</p>
-        </div>
-      </div>
-    </a>
+<a href="latihan.html" class="block bg-white p-5 rounded-2xl shadow">
+  📝 Latihan Soal
+</a>
 
-    <!-- Menu Card 2 -->
-    <a href="latihan.html" class="block">
-      <div class="bg-white p-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-4">
-        <div class="bg-green-100 text-green-600 p-3 rounded-xl text-xl">
-          📝
-        </div>
-        <div>
-          <h2 class="font-semibold text-lg">Latihan Soal</h2>
-          <p class="text-sm text-gray-500">Soal & pembahasan</p>
-        </div>
-      </div>
-    </a>
+<a href="quiz.html" class="block bg-white p-5 rounded-2xl shadow">
+  🧠 Quiz Mode
+</a>
 
-    <!-- Menu Card 3 -->
-    <a href="quiz.html" class="block">
-      <div class="bg-white p-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-4">
-        <div class="bg-purple-100 text-purple-600 p-3 rounded-xl text-xl">
-          🧠
-        </div>
-        <div>
-          <h2 class="font-semibold text-lg">Quiz Mode</h2>
-          <p class="text-sm text-gray-500">Simulasi ujian dengan timer</p>
-        </div>
-      </div>
-    </a>
+<a href="progress.html" class="block bg-white p-5 rounded-2xl shadow">
+  📊 Progress
+</a>
 
-    <!-- Menu Card 4 -->
-    <a href="progress.html" class="block">
-      <div class="bg-white p-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-4">
-        <div class="bg-yellow-100 text-yellow-600 p-3 rounded-xl text-xl">
-          📊
-        </div>
-        <div>
-          <h2 class="font-semibold text-lg">Progress Belajar</h2>
-          <p class="text-sm text-gray-500">Lihat statistik & skor</p>
-        </div>
-      </div>
-    </a>
-
-  </main>
-
-  <!-- Bottom Navigation (Mobile) -->
-  <nav class="bg-white shadow-inner p-3 flex justify-around text-sm border-t">
-    <a href="index.html" class="flex flex-col items-center text-blue-600 font-semibold">
-      <span>🏠</span>
-      <span>Home</span>
-    </a>
-
-    <a href="vocab.html" class="flex flex-col items-center text-gray-500">
-      <span>📚</span>
-      <span>Vocab</span>
-    </a>
-
-    <a href="quiz.html" class="flex flex-col items-center text-gray-500">
-      <span>🧠</span>
-      <span>Quiz</span>
-    </a>
-
-    <a href="progress.html" class="flex flex-col items-center text-gray-500">
-      <span>📊</span>
-      <span>Progress</span>
-    </a>
-  </nav>
-
-  <!-- Script -->
-  <script>
-    // Simulasi update progress dari localStorage
-    const progress = localStorage.getItem("progress") || 35;
-
-    document.getElementById("progressText").innerText = progress + "%";
-    document.getElementById("progressBar").style.width = progress + "%";
-  </script>
+</main>
 
 </body>
 </html>
