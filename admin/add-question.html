@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tambah Soal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+
+<div class="max-w-xl mx-auto p-6">
+<h1 class="text-xl font-bold mb-4">Tambah Soal</h1>
+
+<input id="question" placeholder="Pertanyaan"
+class="w-full p-3 mb-3 border rounded-xl">
+
+<input id="opt1" placeholder="Option 1"
+class="w-full p-3 mb-2 border rounded-xl">
+
+<input id="opt2" placeholder="Option 2"
+class="w-full p-3 mb-2 border rounded-xl">
+
+<input id="opt3" placeholder="Option 3"
+class="w-full p-3 mb-2 border rounded-xl">
+
+<input id="opt4" placeholder="Option 4"
+class="w-full p-3 mb-2 border rounded-xl">
+
+<input id="answer" type="number" placeholder="Jawaban benar (0-3)"
+class="w-full p-3 mb-3 border rounded-xl">
+
+<textarea id="explanation"
+placeholder="Pembahasan"
+class="w-full p-3 mb-3 border rounded-xl"></textarea>
+
+<button onclick="addQuestion()"
+class="bg-green-600 text-white px-4 py-2 rounded-xl">
+Simpan Soal
+</button>
+
+</div>
+
+<script type="module" src="../js/services/adminService.js"></script>
+<script type="module" src="../js/roleGuard.js"></script>
+</body>
+</html>
