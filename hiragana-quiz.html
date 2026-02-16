@@ -7,6 +7,27 @@
 content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+@keyframes fadeInKana {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.kana-animate {
+  animation: fadeInKana 0.35s ease-out;
+}
+</style>
+
 </head>
 
 <body class="bg-gradient-to-b from-purple-600 to-indigo-800 text-white min-h-screen flex flex-col">
@@ -19,19 +40,14 @@ content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 </header>
 
 <!-- MAIN -->
-<main class="flex-1 flex flex-col justify-between px-4">
-
-<!-- QUIZ CARD AREA -->
-<div class="flex-1 flex items-center justify-center">
+<main class="flex-1 flex items-center justify-center px-4 pb-6">
 
   <div id="quizBox"
        class="w-full max-w-xl
               bg-white text-black
               rounded-3xl shadow-2xl
-              p-6 space-y-6">
+              p-6">
   </div>
-
-</div>
 
 </main>
 
