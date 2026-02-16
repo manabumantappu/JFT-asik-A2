@@ -157,46 +157,93 @@ export async function initVocabCBT(config) {
   // ================= FINISH =================
   function finishExam() {
 
-    clearInterval(timerInterval);
+  clearInterval(timerInterval);
 
-    let correct = 0;
-    let wrong = 0;
+  let correct = 0;
+  let wrong = 0;
 
-    questions.forEach(q => {
-      if (q.userAnswer === q.arti) correct++;
-      else wrong++;
-    });
+  questions.forEach(q => {
+    if (q.userAnswer === q.arti) correct++;
+    else wrong++;
+  });
 
-    const scorePercent =
-      Math.round((correct / totalQuestions) * 100);
+  const scorePercent =
+    Math.round((correct / totalQuestions) * 100);
 
-    examBox.innerHTML = `
-      <div class="text-center">
+  examBox.innerHTML = `
+    <div class="mb-6 text-center">
 
-        <div class="text-2xl font-bold mb-4">
-          Hasil Ujian
-        </div>
-
-        <div class="space-y-2 text-lg">
-          <div class="text-green-600">
-            Benar: ${correct}
-          </div>
-          <div class="text-red-600">
-            Salah: ${wrong}
-          </div>
-          <div>
-            Skor: ${scorePercent}%
-          </div>
-        </div>
-
-        <button onclick="location.reload()"
-          class="mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl">
-          Ulangi
-        </button>
-
+      <div class="text-2xl font-bold mb-2">
+        Hasil Ujian
       </div>
-    `;
-  }
+
+      <div class="text-lg">
+        Skor: <span class="font-bold">${scorePercent}%</span>
+      </div>
+
+      <div class="text-green-600">
+        Benar: ${correct}
+      </div>
+
+      <div class="text-red-600 mb-4">
+        Salah: ${wrong}
+      </div>
+
+    </div>
+
+    <div class="space-y-4 max-h-[55vh] overflow-y-auto pr-2">
+
+      ${questions.map((q, index) => {
+
+        const isCorrect = q.userAnswer === q.arti;
+
+        return `
+          <div class="border rounded-xl p-4">
+
+            <div class="text-sm text-gray-500 mb-2">
+              Soal ${index + 1}
+            </div>
+
+            <div class="text-xl font-bold text-blue-700 mb-1">
+              ${q.kanji}
+            </div>
+
+            <div class="text-gray-500 mb-2">
+              (${q.romaji})
+            </div>
+
+            <div class="text-sm mb-1">
+              Jawaban Anda:
+              <span class="${
+                isCorrect
+                  ? 'text-green-600 font-bold'
+                  : 'text-red-600 font-bold'
+              }">
+                ${q.userAnswer ?? "-"}
+              </span>
+            </div>
+
+            ${
+              !isCorrect
+                ? `<div class="text-sm text-green-600">
+                     Jawaban Benar: ${q.arti}
+                   </div>`
+                : ""
+            }
+
+          </div>
+        `;
+      }).join("")}
+
+    </div>
+
+    <button onclick="location.reload()"
+      class="mt-6 w-full bg-blue-600 text-white py-3 rounded-xl">
+      Ulangi Ujian
+    </button>
+  `;
+}
+
 
   function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
