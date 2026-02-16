@@ -26,18 +26,18 @@ auth.onAuthStateChanged(async (user) => {
   const best = data.bestScore || 0;
   const last = data.lastScore || 0;
   const total = data.totalQuiz || 0;
+  const xp = data.xp || 0;
+  const streak = data.streak || 0;
 
   const accuracy = Math.round((best / 10) * 100);
-  const average = total > 0 ? 
-    Math.round(((best + last) / 2)) : 0;
 
-  renderStats(best, last, total, accuracy, average);
+  renderStats(best, last, total, accuracy, xp, streak);
   renderChart(best, last);
 });
 
 
 // ================= RENDER CARDS =================
-function renderStats(best, last, total, accuracy, average) {
+function renderStats(best, last, total, accuracy, xp, streak) {
 
   const level = getLevel(total);
   const badge = getBadge(total);
@@ -46,9 +46,14 @@ function renderStats(best, last, total, accuracy, average) {
     ${statCard("Level", level, "text-indigo-600")}
     ${statCard("Badge", badge, "text-yellow-500")}
     ${statCard("Best Score", best + " / 10", "text-green-600")}
-    ${statCard("XP", (best * 10), "text-purple-600")}
+    ${statCard("XP", xp, "text-purple-600")}
+    ${statCard("Streak 🔥", streak + " hari", "text-red-500")}
+    ${statCard("Akurasi", accuracy + "%", "text-blue-600")}
   `;
 }
+
+
+// ================= LEVEL SYSTEM =================
 function getLevel(totalQuiz) {
   if (totalQuiz >= 10) return "Advanced";
   if (totalQuiz >= 4) return "Intermediate";
@@ -61,6 +66,8 @@ function getBadge(totalQuiz) {
   return "🥉 Starter";
 }
 
+
+// ================= CARD TEMPLATE =================
 function statCard(title, value, color) {
   return `
     <div class="bg-white p-4 rounded-2xl shadow">
@@ -71,6 +78,7 @@ function statCard(title, value, color) {
     </div>
   `;
 }
+
 
 // ================= CHART =================
 function renderChart(best, last) {
@@ -83,8 +91,7 @@ function renderChart(best, last) {
       labels: ["Best Score", "Last Score"],
       datasets: [{
         label: "Skor",
-        data: [best, last],
-        borderWidth: 1
+        data: [best, last]
       }]
     },
     options: {
