@@ -4,62 +4,99 @@ const container = document.getElementById("vocabContainer");
 const searchInput = document.getElementById("searchInput");
 
 let vocabData = [];
+let currentIndex = 0;
 let flashMode = false;
 
-// Load vocab
+// ================= LOAD DATA =================
 async function loadVocab() {
   vocabData = await getVocab();
-  renderVocab(vocabData);
+  renderList(vocabData);
 }
 
-// Render vocab
-function renderVocab(data) {
+// ================= LIST MODE =================
+function renderList(data) {
 
   container.innerHTML = "";
 
-  if (data.length === 0) {
-    container.innerHTML = `
-      <div class="text-center text-gray-500">
-        Data tidak ditemukan
-      </div>
-    `;
-    return;
-  }
-
   data.forEach(item => {
-
     const card = document.createElement("div");
-    card.className =
-      "bg-white p-5 rounded-2xl shadow transition transform active:scale-95";
+    card.className = "bg-white p-4 rounded-2xl shadow";
 
-    if (flashMode) {
-
-      card.classList.add("text-center", "cursor-pointer");
-
-      card.innerHTML = `
-        <div class="text-2xl font-bold">${item.kanji}</div>
-        <div class="hidden mt-3 text-gray-600">${item.arti}</div>
-      `;
-
-      card.onclick = () => {
-        const arti = card.querySelector("div:nth-child(2)");
-        arti.classList.toggle("hidden");
-      };
-
-    } else {
-
-      card.innerHTML = `
-        <div class="text-lg font-bold">${item.kanji}</div>
-        <div class="text-sm text-gray-500">${item.romaji}</div>
-        <div class="text-sm mt-1">${item.arti}</div>
-      `;
-    }
+    card.innerHTML = `
+      <div class="text-lg font-bold">${item.kanji}</div>
+      <div class="text-sm text-gray-500">${item.romaji}</div>
+      <div class="text-sm mt-1">${item.arti}</div>
+    `;
 
     container.appendChild(card);
   });
 }
 
-// Search
+// ================= FLASHCARD MODE =================
+function renderFlashcard() {
+
+  if (vocabData.length === 0) return;
+
+  const item = vocabData[currentIndex];
+
+  container.innerHTML = `
+    <div class="bg-white p-8 rounded-2xl shadow text-center">
+      <div id="flashKanji" class="text-3xl font-bold cursor-pointer">
+        ${item.kanji}
+      </div>
+      <div id="flashArti" class="hidden mt-4 text-gray-600 text-lg">
+        ${item.arti}
+      </div>
+
+      <div class="flex justify-between mt-6">
+        <button onclick="prevCard()" 
+          class="bg-gray-300 px-4 py-2 rounded-xl">
+          ◀ Prev
+        </button>
+
+        <button onclick="shuffleCards()" 
+          class="bg-purple-500 text-white px-4 py-2 rounded-xl">
+          🔀 Shuffle
+        </button>
+
+        <button onclick="nextCard()" 
+          class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+          Next ▶
+        </button>
+      </div>
+
+      <button onclick="startQuizFromVocab()" 
+        class="mt-4 w-full bg-green-600 text-white p-3 rounded-xl">
+        Mode Quiz
+      </button>
+    </div>
+  `;
+
+  document.getElementById("flashKanji").onclick = () => {
+    document.getElementById("flashArti")
+      .classList.toggle("hidden");
+  };
+}
+
+// ================= NAVIGATION =================
+window.nextCard = function () {
+  currentIndex = (currentIndex + 1) % vocabData.length;
+  renderFlashcard();
+};
+
+window.prevCard = function () {
+  currentIndex =
+    (currentIndex - 1 + vocabData.length) % vocabData.length;
+  renderFlashcard();
+};
+
+window.shuffleCards = function () {
+  vocabData.sort(() => Math.random() - 0.5);
+  currentIndex = 0;
+  renderFlashcard();
+};
+
+// ================= SEARCH =================
 searchInput.addEventListener("input", () => {
 
   const keyword = searchInput.value.toLowerCase();
@@ -70,14 +107,75 @@ searchInput.addEventListener("input", () => {
     item.arti.toLowerCase().includes(keyword)
   );
 
-  renderVocab(filtered);
+  renderList(filtered);
 });
 
-// Toggle flash mode
+// ================= TOGGLE MODE =================
 window.toggleMode = function () {
   flashMode = !flashMode;
-  renderVocab(vocabData);
+
+  if (flashMode) {
+    renderFlashcard();
+  } else {
+    renderList(vocabData);
+  }
 };
 
-// Init
+// ================= QUIZ MODE =================
+window.startQuizFromVocab = function () {
+
+  const question = vocabData[currentIndex];
+
+  const choices = shuffleArray([
+    question.arti,
+    ...getRandomChoices(question.arti)
+  ]);
+
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded-2xl shadow">
+      <div class="text-xl font-bold mb-4">
+        Arti dari: ${question.kanji}
+      </div>
+
+      ${choices.map(choice => `
+        <button 
+          class="block w-full bg-gray-200 p-3 rounded-xl mb-2"
+          onclick="checkAnswer('${choice.replace(/'/g, "\\'")}')">
+          ${choice}
+        </button>
+      `).join("")}
+    </div>
+  `;
+};
+
+window.checkAnswer = function (answer) {
+
+  const correct = vocabData[currentIndex].arti;
+
+  if (answer === correct) {
+    alert("✅ Benar!");
+  } else {
+    alert("❌ Salah!\nJawaban: " + correct);
+  }
+
+  renderFlashcard();
+};
+
+// ================= HELPERS =================
+function getRandomChoices(correct) {
+
+  const others = vocabData
+    .filter(item => item.arti !== correct)
+    .map(item => item.arti);
+
+  shuffleArray(others);
+
+  return others.slice(0, 3);
+}
+
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// ================= INIT =================
 loadVocab();
