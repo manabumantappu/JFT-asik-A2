@@ -2,11 +2,19 @@
 <html>
 <head>
 <title>Hiragana Flashcard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-.perspective { perspective: 1400px; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.perspective { perspective: 1500px; }
 
 .card-inner {
   transform-style: preserve-3d;
@@ -18,50 +26,61 @@
 .card-face { backface-visibility: hidden; }
 
 .card-back { transform: rotateY(180deg); }
+
+/* Native safe area */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
 </style>
 </head>
 
-<body class="bg-gradient-to-b from-purple-100 to-white min-h-screen flex flex-col">
+<body class="bg-gradient-to-b from-purple-600 to-indigo-700 text-white">
+
+<!-- FULL SCREEN CONTAINER -->
+<div class="h-screen flex flex-col safe-top safe-bottom">
 
 <!-- HEADER -->
-<header class="bg-purple-600 text-white p-6 rounded-b-3xl shadow-xl">
-  <h1 class="text-2xl font-bold tracking-wide">Hiragana</h1>
+<header class="px-6 pt-6 pb-4">
+  <h1 class="text-2xl font-bold tracking-wide">
+    Hiragana
+  </h1>
 </header>
 
-<!-- MAIN -->
-<main class="flex-1 flex flex-col justify-between px-4 py-6">
-
 <!-- CARD AREA -->
-<div class="flex-1 flex items-center justify-center">
+<div class="flex-1 flex items-center justify-center px-4">
 
 <div class="perspective w-full flex justify-center">
 
   <div id="flashCard"
-    class="card w-full max-w-lg 
-           h-[60vh] sm:h-[500px]
+    class="card w-full max-w-xl
+           h-[70vh] sm:h-[550px]
            cursor-pointer">
 
     <div class="card-inner w-full h-full relative">
 
       <!-- FRONT -->
       <div class="card-face absolute w-full h-full
-                  bg-white rounded-3xl shadow-2xl
+                  bg-white text-black
+                  rounded-3xl shadow-2xl
                   flex items-center justify-center">
 
         <span id="frontText"
-          class="text-[22vw] sm:text-8xl md:text-9xl font-bold">
+          class="text-[28vw] sm:text-9xl font-bold">
         </span>
 
       </div>
 
       <!-- BACK -->
       <div class="card-face card-back absolute w-full h-full
-                  bg-gradient-to-br from-purple-600 to-indigo-700
-                  text-white rounded-3xl shadow-2xl
+                  bg-gradient-to-br from-purple-500 to-indigo-600
+                  rounded-3xl shadow-2xl
                   flex items-center justify-center">
 
         <span id="backText"
-          class="text-[12vw] sm:text-5xl md:text-6xl font-bold tracking-wide">
+          class="text-[14vw] sm:text-6xl font-bold tracking-wide">
         </span>
 
       </div>
@@ -69,37 +88,41 @@
     </div>
 
   </div>
-</div>
 
 </div>
+</div>
 
-<!-- CONTROLS -->
-<div class="space-y-4 pb-6">
+<!-- CONTROLS (Bottom Native Bar) -->
+<div class="px-6 pb-6 space-y-4">
 
 <button onclick="prevKana()"
- class="w-full bg-gray-200 py-4 rounded-2xl
-        text-lg font-semibold shadow active:scale-95 transition">
+ class="w-full bg-white/20 backdrop-blur-md
+        py-4 rounded-2xl
+        text-lg font-semibold
+        active:scale-95 transition">
 ⬅ Prev
 </button>
 
 <button id="shuffleBtn"
  onclick="toggleShuffle()"
- class="w-full bg-yellow-500 text-white py-4
-        rounded-2xl text-lg font-semibold
-        shadow active:scale-95 transition">
+ class="w-full bg-yellow-400 text-black
+        py-4 rounded-2xl
+        text-lg font-semibold
+        active:scale-95 transition">
 🔀 Shuffle
 </button>
 
 <button onclick="nextKana()"
- class="w-full bg-purple-600 text-white py-4
-        rounded-2xl text-lg font-semibold
-        shadow active:scale-95 transition">
+ class="w-full bg-white text-purple-700
+        py-4 rounded-2xl
+        text-lg font-semibold
+        active:scale-95 transition">
 Next ➡
 </button>
 
 </div>
 
-</main>
+</div>
 
 <script type="module">
 import { hiraganaData } from "./js/data/hiragana.js";
@@ -143,12 +166,12 @@ window.toggleShuffle = function() {
     data = shuffle([...data]);
     isShuffled = true;
     shuffleBtn.innerText = "🔀 Shuffle ON";
-    shuffleBtn.classList.replace("bg-yellow-500","bg-green-500");
+    shuffleBtn.classList.replace("bg-yellow-400","bg-green-400");
   } else {
     data = [...originalData];
     isShuffled = false;
     shuffleBtn.innerText = "🔀 Shuffle";
-    shuffleBtn.classList.replace("bg-green-500","bg-yellow-500");
+    shuffleBtn.classList.replace("bg-green-400","bg-yellow-400");
   }
 
   index = 0;
