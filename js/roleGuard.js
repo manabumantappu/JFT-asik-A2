@@ -1,7 +1,8 @@
-import { auth } from "./firebase.js";
-import { getUserRole } from "./services/roleService.js";
+import { auth } from "../js/firebase.js";
+import { getUserRole } from "../js/services/roleService.js";
 
 auth.onAuthStateChanged(async (user) => {
+
   if (!user) {
     window.location.href = "../login.html";
     return;
@@ -13,4 +14,5 @@ auth.onAuthStateChanged(async (user) => {
     alert("Akses hanya untuk Admin!");
     window.location.href = "../index.html";
   }
+
 });
