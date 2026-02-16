@@ -6,17 +6,19 @@
   <title>JFT Basic A2 Prep</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg relative">
   <h1 class="text-2xl font-bold">JFT Basic A2 Prep</h1>
   <p class="text-sm">Persiapan Ujian A2</p>
+
+  <!-- Logout -->
+  <button onclick="logoutUser()"
+    class="absolute top-4 right-4 bg-red-500 text-white px-3 py-2 rounded-xl">
+    Logout
+  </button>
 </header>
-  
-<button onclick="logoutUser()"
-class="fixed top-4 right-4 bg-red-500 text-white px-3 py-2 rounded-xl">
-Logout
-</button>
 
 <main class="flex-1 p-5 space-y-4">
 
@@ -37,6 +39,20 @@ Logout
 </a>
 
 </main>
+
+<!-- Logout Script -->
+<script type="module">
+import { auth } from "./js/firebase.js";
+import { signOut } from
+"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+window.logoutUser = async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+</script>
+
+<!-- Guard (WAJIB PALING BAWAH) -->
 <script type="module" src="js/guard.js"></script>
 
 </body>
