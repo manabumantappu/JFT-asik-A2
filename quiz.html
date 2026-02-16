@@ -4,53 +4,93 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz Flashcard</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-.card {
-  perspective: 1000px;
+body {
+  background: linear-gradient(135deg, #e0e7ff, #f3f4f6);
 }
+
+/* Card wrapper */
+.card {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 520px;
+}
+
+/* Inner flip animation */
 .card-inner {
-  transition: transform 0.6s;
+  position: relative;
+  width: 100%;
+  min-height: 260px;
+  transition: transform 0.7s;
   transform-style: preserve-3d;
 }
+
 .card.flip .card-inner {
   transform: rotateY(180deg);
 }
-.card-front, .card-back {
-  backface-visibility: hidden;
-}
+
+/* Front & Back */
+.card-front,
 .card-back {
+  position: absolute;
+  width: 100%;
+  min-height: 260px;
+  backface-visibility: hidden;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: break-word;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* Front style */
+.card-front {
+  background: white;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+/* Back style */
+.card-back {
+  background: #1e40af;
+  color: white;
   transform: rotateY(180deg);
+  font-size: 1.3rem;
 }
 </style>
 
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
-<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
-  <h1 class="text-xl font-bold">Quiz Flashcard</h1>
-  <p id="progress" class="text-sm opacity-80"></p>
+<header class="bg-blue-600 text-white p-6 rounded-b-3xl shadow-lg">
+  <h1 class="text-2xl font-bold">Quiz Flashcard</h1>
+  <p id="progress" class="text-sm opacity-80 mt-1"></p>
 </header>
 
-<main class="flex-1 p-5 flex flex-col justify-center items-center">
+<main class="flex-1 p-6 flex flex-col items-center justify-center">
 
-<div id="cardContainer"></div>
+  <div id="cardContainer" class="w-full flex justify-center"></div>
 
-<div id="buttons" class="mt-6 hidden w-full max-w-sm space-y-3">
-  <button onclick="markCorrect()" 
-    class="w-full bg-green-600 text-white p-3 rounded-xl">
-    Saya Benar
-  </button>
+  <div id="buttons" class="mt-8 hidden w-full max-w-md space-y-3">
+    <button onclick="markCorrect()" 
+      class="w-full bg-green-600 hover:bg-green-700 transition text-white p-4 rounded-2xl font-semibold shadow">
+      ✅ Saya Benar
+    </button>
 
-  <button onclick="markWrong()" 
-    class="w-full bg-red-500 text-white p-3 rounded-xl">
-    Saya Salah
-  </button>
-</div>
+    <button onclick="markWrong()" 
+      class="w-full bg-red-500 hover:bg-red-600 transition text-white p-4 rounded-2xl font-semibold shadow">
+      ❌ Saya Salah
+    </button>
+  </div>
 
-<div id="result" class="hidden text-center mt-6"></div>
+  <div id="result" class="hidden text-center mt-8"></div>
 
 </main>
 
