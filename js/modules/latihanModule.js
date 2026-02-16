@@ -7,6 +7,8 @@ let vocabData = [];
 let currentQuestion = null;
 let score = 0;
 let answered = false;
+let timer;
+let timeLeft = 10; // detik
 
 // ================= INIT =================
 async function init() {
@@ -23,6 +25,7 @@ function generateQuestion() {
   }
 
   answered = false;
+  resetTimer();
 
   const randomIndex = Math.floor(Math.random() * vocabData.length);
   currentQuestion = vocabData[randomIndex];
@@ -33,13 +36,19 @@ function generateQuestion() {
   ]);
 
   container.innerHTML = `
-    <div class="text-xl font-bold mb-4">
+    <div class="mb-3">
+      <div class="h-2 bg-gray-200 rounded">
+        <div id="timeBar" class="h-2 bg-red-500 rounded transition-all"></div>
+      </div>
+    </div>
+
+    <div class="text-xl font-bold mb-4 animate-fade">
       Arti dari: ${currentQuestion.kanji}
     </div>
 
     ${choices.map(choice => `
       <button 
-        class="answerBtn block w-full bg-gray-200 p-3 rounded-xl mb-2 transition"
+        class="answerBtn block w-full bg-gray-200 p-3 rounded-xl mb-2 transition duration-300 transform hover:scale-105"
         data-answer="${choice}">
         ${choice}
       </button>
@@ -49,17 +58,59 @@ function generateQuestion() {
   document.querySelectorAll(".answerBtn").forEach(btn => {
     btn.addEventListener("click", () => checkAnswer(btn));
   });
+
+  startTimer();
 }
 
-// ================= CHECK ANSWER =================
+// ================= TIMER =================
+function startTimer() {
+
+  const timeBar = document.getElementById("timeBar");
+  timeLeft = 10;
+
+  timer = setInterval(() => {
+
+    timeLeft--;
+
+    timeBar.style.width = (timeLeft * 10) + "%";
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      if (!answered) autoWrong();
+    }
+
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timer);
+}
+
+// ================= AUTO SALAH =================
+function autoWrong() {
+  highlightAnswers(null);
+}
+
+// ================= CHECK =================
 function checkAnswer(button) {
 
   if (answered) return;
+
   answered = true;
+  resetTimer();
 
-  const selected = button.dataset.answer;
+  highlightAnswers(button.dataset.answer);
+
+  if (button.dataset.answer === currentQuestion.arti) {
+    score++;
+    scoreDisplay.innerText = "Skor: " + score;
+  }
+}
+
+// ================= HIGHLIGHT =================
+function highlightAnswers(selected) {
+
   const correct = currentQuestion.arti;
-
   const buttons = document.querySelectorAll(".answerBtn");
 
   buttons.forEach(btn => {
@@ -76,16 +127,17 @@ function checkAnswer(button) {
       btn.classList.add("bg-red-500", "text-white");
     }
   });
-
-  if (selected === correct) {
-    score++;
-    scoreDisplay.innerText = "Skor: " + score;
-  }
 }
 
-// ================= NEXT QUESTION =================
+// ================= NEXT =================
 window.nextQuestion = function() {
-  generateQuestion();
+
+  container.classList.add("opacity-0");
+
+  setTimeout(() => {
+    generateQuestion();
+    container.classList.remove("opacity-0");
+  }, 300);
 };
 
 // ================= HELPERS =================
