@@ -7,42 +7,32 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-export async function updateProgress(score) {
+export async function saveQuizResult(score, total) {
 
-  const uid = auth.currentUser.uid;
-  const progressRef = doc(db, "progress", uid);
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const progressRef = doc(db, "progress", user.uid);
   const snap = await getDoc(progressRef);
 
   if (!snap.exists()) {
 
     await setDoc(progressRef, {
+      bestScore: score,
       lastScore: score,
       totalQuiz: 1,
-      bestScore: score,
       updatedAt: serverTimestamp()
     });
 
-  } else {
-
-    const data = snap.data();
-
-    await updateDoc(progressRef, {
-      lastScore: score,
-      totalQuiz: (data.totalQuiz || 0) + 1,
-      bestScore: Math.max(data.bestScore || 0, score),
-      updatedAt: serverTimestamp()
-    });
-  }
-}
-
-// Ambil data progress
-export async function getProgress() {
-  const uid = auth.currentUser.uid;
-  const snap = await getDoc(doc(db, "progress", uid));
-
-  if (snap.exists()) {
-    return snap.data();
+    return;
   }
 
-  return null;
+  const data = snap.data();
+
+  await updateDoc(progressRef, {
+    lastScore: score,
+    bestScore: Math.max(score, data.bestScore),
+    totalQuiz: data.totalQuiz + 1,
+    updatedAt: serverTimestamp()
+  });
 }
