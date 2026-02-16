@@ -56,6 +56,28 @@ window.logoutUser = async () => {
 };
 </script>
 
+  <script type="module">
+import { auth } from "./js/firebase.js";
+import { signOut } from
+"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+import { getUserRole } from "./js/services/roleService.js";
+
+window.logoutUser = async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+
+// Ambil role dan tampilkan
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    const role = await getUserRole();
+    document.getElementById("userRole").innerText =
+      role === "admin" ? "👑 Admin" : "👤 User";
+  }
+});
+</script>
+
 <!-- Guard (WAJIB PALING BAWAH) -->
 <script type="module" src="js/guard.js"></script>
 
