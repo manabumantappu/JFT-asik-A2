@@ -40,22 +40,37 @@ export function initQuiz(data, mode = "quiz") {
         .map(d => d.romaji)
     ]);
 
-    container.innerHTML = `
-      <div class="flex justify-between mb-4 text-sm text-gray-500">
-        <div>⏱ <span id="timer">${timeLeft}</span></div>
-        <div>⭐ Score: ${score}</div>
-      </div>
+   quizBox.innerHTML = `
+  <div class="flex justify-between text-sm text-gray-500 mb-4">
+    <div>⏳ ${timeLeft}s</div>
+    <div>⭐ Score: ${score}</div>
+  </div>
 
-      <div class="text-6xl font-bold mb-6">
-        ${current.char}
-      </div>
+  <div class="flex items-center justify-center h-[30vh] sm:h-[220px]">
 
-      ${choices.map(c => `
-        <button class="choice block w-full bg-gray-200 p-3 rounded-xl mb-2 hover:bg-gray-300 transition">
-          ${c}
-        </button>
-      `).join("")}
-    `;
+    <div id="kanaChar"
+         class="kana-animate
+                text-[26vw] sm:text-7xl md:text-8xl
+                font-bold leading-none text-purple-700">
+      ${question.char}
+    </div>
+
+  </div>
+
+  <div class="space-y-4 mt-4">
+    ${options.map(opt => `
+      <button
+        class="w-full py-4 rounded-2xl bg-gray-100
+               text-lg font-semibold
+               hover:bg-purple-200
+               active:scale-95 transition"
+        onclick="checkAnswer('${opt}')">
+        ${opt}
+      </button>
+    `).join("")}
+  </div>
+`;
+
 
     document.querySelectorAll(".choice").forEach(btn => {
       btn.onclick = () => checkAnswer(btn.innerText);
@@ -99,3 +114,11 @@ export function initQuiz(data, mode = "quiz") {
   nextQuestion();
   startTimer();
 }
+setTimeout(() => {
+  const kana = document.getElementById("kanaChar");
+  if (kana) {
+    kana.classList.remove("kana-animate");
+    void kana.offsetWidth;
+    kana.classList.add("kana-animate");
+  }
+}, 10);
