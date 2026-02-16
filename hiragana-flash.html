@@ -3,32 +3,65 @@
 <head>
 <title>Hiragana Flashcard</title>
 <script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.perspective {
+  perspective: 1200px;
+}
+.card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+.card.flip .card-inner {
+  transform: rotateY(180deg);
+}
+.card-face {
+  backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+</style>
+
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
 <header class="bg-purple-600 text-white p-6 rounded-b-3xl">
 <h1 class="text-xl font-bold">Hiragana Flashcard</h1>
 </header>
 
-<main class="flex-1 flex flex-col items-center justify-center space-y-6">
+<main class="flex-1 flex flex-col items-center justify-center p-6 space-y-8">
 
-<div id="flashCard"
-  class="
-    bg-white
-    w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%]
-    aspect-[3/2]
-    rounded-3xl
-    shadow-2xl
-    flex items-center justify-center
-    cursor-pointer
-    transition-all duration-300
-    text-6xl sm:text-7xl md:text-8xl
-    font-bold
-  ">
+<div class="perspective w-full flex justify-center">
+
+  <div id="flashCard"
+    class="card w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] aspect-[3/2] cursor-pointer">
+
+    <div class="card-inner w-full h-full relative">
+
+      <!-- FRONT -->
+      <div class="card-face absolute w-full h-full bg-white rounded-3xl shadow-2xl flex items-center justify-center">
+        <span id="frontText"
+          class="text-6xl sm:text-7xl md:text-8xl font-bold">
+        </span>
+      </div>
+
+      <!-- BACK -->
+      <div class="card-face card-back absolute w-full h-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-3xl shadow-2xl flex items-center justify-center">
+        <span id="backText"
+          class="text-4xl sm:text-5xl md:text-6xl font-bold">
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
 <button onclick="nextKana()"
- class="bg-purple-600 text-white px-4 py-2 rounded-xl">
+ class="bg-purple-600 text-white px-6 py-3 rounded-xl shadow hover:scale-105 transition">
 Next
 </button>
 
@@ -36,9 +69,30 @@ Next
 
 <script type="module">
 import { hiraganaData } from "./js/data/hiragana.js";
-import { initFlash } from "./js/modules/kanaFlashModule.js";
 
-initFlash(hiraganaData);
+let index = 0;
+let flipped = false;
+
+const card = document.getElementById("flashCard");
+const frontText = document.getElementById("frontText");
+const backText = document.getElementById("backText");
+
+function render() {
+  frontText.innerText = hiraganaData[index].char;
+  backText.innerText = hiraganaData[index].romaji;
+}
+
+card.addEventListener("click", () => {
+  card.classList.toggle("flip");
+});
+
+window.nextKana = function() {
+  card.classList.remove("flip");
+  index = (index + 1) % hiraganaData.length;
+  render();
+};
+
+render();
 </script>
 
 </body>
