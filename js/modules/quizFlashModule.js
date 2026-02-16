@@ -1,4 +1,5 @@
 import { getVocab } from "../services/vocabService.js";
+import { saveQuizResult } from "../services/progressService.js";
 
 let vocabData = [];
 let quizSet = [];
@@ -84,7 +85,9 @@ function next() {
 }
 
 // ================= RESULT =================
-function showResult() {
+async function showResult() {
+
+  await saveQuizResult(score, TOTAL_QUESTIONS);
 
   cardContainer.innerHTML = "";
   buttons.classList.add("hidden");
@@ -93,7 +96,10 @@ function showResult() {
 
   resultBox.innerHTML = `
     <h2 class="text-2xl font-bold mb-4">Hasil Quiz</h2>
-    <p class="text-lg mb-4">Skor: ${score} / ${TOTAL_QUESTIONS}</p>
+    <p class="text-lg mb-2">Skor: ${score} / ${TOTAL_QUESTIONS}</p>
+    <p class="text-sm text-gray-500 mb-4">
+      Skor tersimpan ke progress
+    </p>
     <button onclick="location.reload()"
       class="bg-blue-600 text-white px-4 py-2 rounded-xl">
       Ulangi Quiz
