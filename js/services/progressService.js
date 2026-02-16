@@ -28,9 +28,21 @@ export async function updateProgress(score) {
 
     await updateDoc(progressRef, {
       lastScore: score,
-      totalQuiz: data.totalQuiz + 1,
-      bestScore: Math.max(data.bestScore, score),
+      totalQuiz: (data.totalQuiz || 0) + 1,
+      bestScore: Math.max(data.bestScore || 0, score),
       updatedAt: serverTimestamp()
     });
   }
+}
+
+// Ambil data progress
+export async function getProgress() {
+  const uid = auth.currentUser.uid;
+  const snap = await getDoc(doc(db, "progress", uid));
+
+  if (snap.exists()) {
+    return snap.data();
+  }
+
+  return null;
 }
