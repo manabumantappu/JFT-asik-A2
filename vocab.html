@@ -3,22 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kosakata</title>
+<title>Kosakata A2</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<header class="bg-blue-600 text-white p-4 rounded-b-3xl">
-<h1 class="text-lg font-bold">Kosakata A2</h1>
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+  <h1 class="text-xl font-bold">Kosakata A2</h1>
+  <p class="text-sm opacity-80">Klik kartu untuk lihat arti (Flashcard)</p>
 </header>
 
-<div class="p-4">
-<input id="search" placeholder="Cari..." class="w-full p-3 rounded-xl border">
+<div class="p-4 space-y-3">
+
+  <input 
+    id="searchInput" 
+    placeholder="Cari kanji, romaji, atau arti..."
+    class="w-full p-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+
+  <button 
+    onclick="toggleMode()" 
+    class="w-full bg-blue-600 text-white p-3 rounded-xl">
+    Mode Flashcard
+  </button>
+
 </div>
 
-<main id="vocabList" class="p-4 space-y-4"></main>
+<main id="vocabContainer" class="p-4 space-y-4 flex-1"></main>
 
-<script src="js/data.js"></script>
 <script type="module" src="js/modules/vocabModule.js"></script>
 
 </body>
