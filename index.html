@@ -55,35 +55,32 @@ import { auth } from "./js/firebase.js";
 import { signOut } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-window.logoutUser = async () => {
-  await signOut(auth);
-  window.location.href = "login.html";
-};
-</script>
-
-  <script type="module">
-import { auth } from "./js/firebase.js";
-import { signOut } from
-"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
 import { getUserRole } from "./js/services/roleService.js";
 
+// Logout
 window.logoutUser = async () => {
   await signOut(auth);
   window.location.href = "login.html";
 };
-if (role === "admin") {
-  document.getElementById("adminMenu").classList.remove("hidden");
-}
 
-// Ambil role dan tampilkan
+// Ambil role & tampilkan
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     const role = await getUserRole();
+
+    // Tampilkan role text
     document.getElementById("userRole").innerText =
       role === "admin" ? "👑 Admin" : "👤 User";
+
+    // Tampilkan menu admin jika admin
+    if (role === "admin") {
+      document.getElementById("adminMenu")
+        .classList.remove("hidden");
+    }
   }
 });
+</script>
+
 </script>
 
 <!-- Guard (WAJIB PALING BAWAH) -->
