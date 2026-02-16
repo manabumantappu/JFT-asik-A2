@@ -102,16 +102,26 @@ export function initKanaCBT(data, config) {
       </button>
     `;
 
-    document.querySelectorAll(".choice").forEach(btn => {
-      btn.onclick = () => {
-        q.userAnswer = btn.dataset.value;
-        renderQuestion();
-      };
+   document.querySelectorAll(".choice").forEach(btn => {
+  btn.onclick = () => {
 
-      if (q.userAnswer === btn.dataset.value) {
-        btn.classList.add("bg-indigo-200");
-      }
+    // hapus highlight semua
+    document.querySelectorAll(".choice").forEach(b => {
+      b.classList.remove("bg-indigo-500", "text-white");
     });
+
+    // tambahkan highlight ke yang dipilih
+    btn.classList.add("bg-indigo-500", "text-white");
+
+    q.userAnswer = btn.dataset.value;
+  };
+
+  // restore jika sudah pernah dijawab
+  if (q.userAnswer === btn.dataset.value) {
+    btn.classList.add("bg-indigo-500", "text-white");
+  }
+});
+
 
     document.getElementById("prevBtn").onclick = () => {
       if (currentIndex > 0) {
