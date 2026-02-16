@@ -102,26 +102,39 @@ export function initKanaCBT(data, config) {
       </button>
     `;
 
-   document.querySelectorAll(".choice").forEach(btn => {
+  document.querySelectorAll(".choice").forEach(btn => {
   btn.onclick = () => {
 
-    // hapus highlight semua
+    // reset semua
     document.querySelectorAll(".choice").forEach(b => {
-      b.classList.remove("bg-indigo-500", "text-white");
+      b.classList.remove(
+        "bg-indigo-100",
+        "border-indigo-600",
+        "ring-2",
+        "ring-indigo-400"
+      );
     });
 
-    // tambahkan highlight ke yang dipilih
-    btn.classList.add("bg-indigo-500", "text-white");
+    // highlight pilihan
+    btn.classList.add(
+      "bg-indigo-100",
+      "border-indigo-600",
+      "ring-2",
+      "ring-indigo-400"
+    );
 
     q.userAnswer = btn.dataset.value;
   };
 
-  // restore jika sudah pernah dijawab
   if (q.userAnswer === btn.dataset.value) {
-    btn.classList.add("bg-indigo-500", "text-white");
+    btn.classList.add(
+      "bg-indigo-100",
+      "border-indigo-600",
+      "ring-2",
+      "ring-indigo-400"
+    );
   }
 });
-
 
     document.getElementById("prevBtn").onclick = () => {
       if (currentIndex > 0) {
