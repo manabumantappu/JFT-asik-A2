@@ -67,24 +67,16 @@ window.logoutUser = async () => {
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     const role = await getUserRole();
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    console.log("UID Login:", user.uid);
-  }
-});
 
-    // Tampilkan role text
     document.getElementById("userRole").innerText =
       role === "admin" ? "👑 Admin" : "👤 User";
 
-    // Tampilkan menu admin jika admin
     if (role === "admin") {
       document.getElementById("adminMenu")
         .classList.remove("hidden");
     }
   }
 });
-</script>
 
 </script>
 
