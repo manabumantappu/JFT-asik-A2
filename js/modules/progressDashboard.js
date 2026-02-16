@@ -39,12 +39,26 @@ auth.onAuthStateChanged(async (user) => {
 // ================= RENDER CARDS =================
 function renderStats(best, last, total, accuracy, average) {
 
+  const level = getLevel(total);
+  const badge = getBadge(total);
+
   statsBox.innerHTML = `
+    ${statCard("Level", level, "text-indigo-600")}
+    ${statCard("Badge", badge, "text-yellow-500")}
     ${statCard("Best Score", best + " / 10", "text-green-600")}
-    ${statCard("Last Score", last + " / 10", "text-blue-600")}
-    ${statCard("Total Quiz", total, "text-purple-600")}
-    ${statCard("Akurasi", accuracy + "%", "text-orange-500")}
+    ${statCard("XP", (best * 10), "text-purple-600")}
   `;
+}
+function getLevel(totalQuiz) {
+  if (totalQuiz >= 10) return "Advanced";
+  if (totalQuiz >= 4) return "Intermediate";
+  return "Beginner";
+}
+
+function getBadge(totalQuiz) {
+  if (totalQuiz >= 10) return "🏆 Master";
+  if (totalQuiz >= 4) return "🥈 Learner";
+  return "🥉 Starter";
 }
 
 function statCard(title, value, color) {
