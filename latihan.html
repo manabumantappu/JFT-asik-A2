@@ -3,20 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Latihan</title>
+<title>Latihan Kosakata</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<header class="bg-green-600 text-white p-4 rounded-b-3xl">
-<h1 class="text-lg font-bold">Latihan Soal</h1>
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+  <h1 class="text-xl font-bold">Latihan Kosakata A2</h1>
 </header>
 
-<main class="p-4">
-<div id="questionBox" class="bg-white p-5 rounded-2xl shadow"></div>
+<main class="flex-1 p-5">
+
+<div id="quizContainer" class="bg-white p-6 rounded-2xl shadow">
+  Loading...
+</div>
+
+<div class="mt-4 flex justify-between">
+  <div id="score" class="font-bold">Skor: 0</div>
+  <button onclick="nextQuestion()" 
+    class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+    Soal Berikutnya
+  </button>
+</div>
+
 </main>
 
-<script src="js/data.js"></script>
 <script type="module" src="js/modules/latihanModule.js"></script>
 
 </body>
