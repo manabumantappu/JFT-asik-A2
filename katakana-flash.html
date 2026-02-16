@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Katakana Flashcard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+<header class="bg-indigo-600 text-white p-6 rounded-b-3xl">
+<h1 class="text-xl font-bold">Katakana Flashcard</h1>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center space-y-6">
+
+<div id="flashCard"
+ class="bg-white w-80 h-48 rounded-3xl shadow-xl 
+        flex items-center justify-center 
+        cursor-pointer transition-all duration-300">
+
+</div>
+
+<button onclick="nextKana()"
+ class="bg-indigo-600 text-white px-6 py-3 rounded-xl shadow">
+Next
+</button>
+
+</main>
+
+<script type="module">
+import { katakanaData } from "./js/data/katakana.js";
+import { initFlash } from "./js/modules/kanaFlashModule.js";
+
+initFlash(katakanaData);
+</script>
+
+</body>
+</html>
