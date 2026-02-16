@@ -1,35 +1,80 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload Kosakata</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Upload Kosakata</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-6">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
 
-<h1 class="text-2xl font-bold mb-4">Upload Kosakata JSON</h1>
+<!-- HEADER -->
+<header class="sticky top-0 z-40
+               bg-white/80 dark:bg-gray-900/80
+               backdrop-blur-lg
+               border-b border-gray-200 dark:border-gray-700">
 
-<div class="bg-white p-6 rounded-2xl shadow max-w-xl">
+  <div class="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
 
-  <input type="file" id="fileInput"
-    class="mb-4 w-full border p-2 rounded-xl">
+    <h1 class="text-xl sm:text-2xl font-bold">
+      📚 Upload Kosakata
+    </h1>
 
-  <button onclick="uploadVocab()"
-    class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-    Upload
-  </button>
+    <a href="dashboard.html"
+       class="text-sm bg-gray-200 dark:bg-gray-700
+              px-4 py-2 rounded-xl
+              hover:opacity-80 transition">
+      ⬅ Back
+    </a>
 
-  <p id="status" class="mt-4 text-sm"></p>
+  </div>
+</header>
 
-</div>
+<!-- MAIN -->
+<main class="max-w-2xl mx-auto px-4 py-6">
+
+  <div class="bg-white dark:bg-gray-800
+              rounded-3xl shadow-xl
+              p-6 sm:p-8 space-y-6">
+
+    <div>
+      <label class="text-sm font-semibold text-gray-500 dark:text-gray-400">
+        Pilih File JSON
+      </label>
+
+      <input type="file"
+        id="fileInput"
+        accept=".json"
+        class="w-full mt-2 p-4 rounded-2xl border
+               dark:bg-gray-700 dark:border-gray-600
+               file:mr-4 file:py-2 file:px-4
+               file:rounded-xl file:border-0
+               file:bg-blue-600 file:text-white
+               hover:file:bg-blue-700
+               text-base">
+    </div>
+
+    <button onclick="uploadVocab()"
+      class="w-full bg-blue-600 hover:bg-blue-700
+             text-white py-4 rounded-2xl
+             text-lg font-semibold
+             shadow-lg transition active:scale-95">
+      ⬆ Upload Kosakata
+    </button>
+
+    <div id="status"
+         class="text-sm text-center font-medium">
+    </div>
+
+  </div>
+
+</main>
 
 <script type="module">
-
 import { db } from "../js/firebase.js";
 import {
   collection,
-  addDoc,
   serverTimestamp,
   writeBatch,
   doc
@@ -41,41 +86,54 @@ window.uploadVocab = async () => {
   const status = document.getElementById("status");
 
   if (!file) {
-    alert("Pilih file JSON terlebih dahulu");
+    status.innerText = "⚠ Pilih file JSON terlebih dahulu.";
+    status.className = "text-red-500 text-center font-medium";
     return;
   }
 
-  status.innerText = "Membaca file...";
+  try {
 
-  const text = await file.text();
-  const data = JSON.parse(text);
+    status.innerText = "📖 Membaca file...";
+    status.className = "text-gray-500 text-center font-medium";
 
-  if (!Array.isArray(data)) {
-    alert("Format JSON harus array");
-    return;
-  }
+    const text = await file.text();
+    const data = JSON.parse(text);
 
-  const batch = writeBatch(db);
+    if (!Array.isArray(data)) {
+      status.innerText = "❌ Format JSON harus berupa array.";
+      status.className = "text-red-500 text-center font-medium";
+      return;
+    }
 
-  data.forEach(item => {
+    const batch = writeBatch(db);
 
-    const docRef = collection(db, "vocab");
+    data.forEach(item => {
 
-    batch.set(doc(collection(db, "vocab")), {
-      kanji: item.kanji || "",
-      romaji: item.romaji || "",
-      arti: item.arti || "",
-      level: "A2",
-      createdAt: serverTimestamp()
+      const ref = doc(collection(db, "vocab"));
+
+      batch.set(ref, {
+        kanji: item.kanji || "",
+        romaji: item.romaji || "",
+        arti: item.arti || "",
+        level: "A2",
+        createdAt: serverTimestamp()
+      });
+
     });
 
-  });
+    await batch.commit();
 
-  await batch.commit();
+    status.innerText = "✅ Upload berhasil!";
+    status.className = "text-green-600 text-center font-semibold";
 
-  status.innerText = "Upload berhasil!";
+    document.getElementById("fileInput").value = "";
+
+  } catch (err) {
+
+    status.innerText = "❌ Terjadi kesalahan: " + err.message;
+    status.className = "text-red-500 text-center font-medium";
+  }
 };
-
 </script>
 
 <script type="module" src="../js/roleGuard.js"></script>
