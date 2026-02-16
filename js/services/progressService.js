@@ -12,15 +12,21 @@ export async function saveQuizResult(score, total) {
   const user = auth.currentUser;
   if (!user) return;
 
-  const progressRef = doc(db, "progress", user.uid);
-  const snap = await getDoc(progressRef);
+  const ref = doc(db, "progress", user.uid);
+  const snap = await getDoc(ref);
+
+  const today = new Date().toDateString();
+  const xpEarned = score * 10;
 
   if (!snap.exists()) {
 
-    await setDoc(progressRef, {
+    await setDoc(ref, {
       bestScore: score,
       lastScore: score,
       totalQuiz: 1,
+      xp: xpEarned,
+      streak: 1,
+      lastPlayed: today,
       updatedAt: serverTimestamp()
     });
 
@@ -29,10 +35,26 @@ export async function saveQuizResult(score, total) {
 
   const data = snap.data();
 
-  await updateDoc(progressRef, {
+  let streak = 1;
+
+  if (data.lastPlayed === today) {
+    streak = data.streak;
+  } else {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (data.lastPlayed === yesterday.toDateString()) {
+      streak = data.streak + 1;
+    }
+  }
+
+  await updateDoc(ref, {
     lastScore: score,
     bestScore: Math.max(score, data.bestScore),
     totalQuiz: data.totalQuiz + 1,
+    xp: (data.xp || 0) + xpEarned,
+    streak: streak,
+    lastPlayed: today,
     updatedAt: serverTimestamp()
   });
 }
