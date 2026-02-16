@@ -5,19 +5,21 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-.perspective {
-  perspective: 1200px;
-}
+.perspective { perspective: 1200px; }
+
 .card-inner {
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
+
 .card.flip .card-inner {
   transform: rotateY(180deg);
 }
+
 .card-face {
   backface-visibility: hidden;
 }
+
 .card-back {
   transform: rotateY(180deg);
 }
@@ -28,7 +30,7 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
 <header class="bg-indigo-600 text-white p-6 rounded-b-3xl">
-<h1 class="text-xl font-bold">Katakana Flashcard</h1>
+  <h1 class="text-xl font-bold">Katakana Flashcard</h1>
 </header>
 
 <main class="flex-1 flex flex-col items-center justify-center p-6 space-y-8">
@@ -67,7 +69,8 @@
 Prev
 </button>
 
-<button onclick="toggleShuffle()"
+<button id="shuffleBtn"
+ onclick="toggleShuffle()"
  class="bg-yellow-500 text-white px-6 py-3 rounded-xl shadow hover:scale-105 transition">
 Shuffle
 </button>
@@ -78,7 +81,6 @@ Next
 </button>
 
 </div>
-
 
 </main>
 
@@ -93,6 +95,7 @@ let isShuffled = false;
 const card = document.getElementById("flashCard");
 const frontText = document.getElementById("frontText");
 const backText = document.getElementById("backText");
+const shuffleBtn = document.getElementById("shuffleBtn");
 
 function render() {
   frontText.innerText = data[index].char;
@@ -122,9 +125,15 @@ window.toggleShuffle = function() {
   if (!isShuffled) {
     data = shuffle([...data]);
     isShuffled = true;
+    shuffleBtn.innerText = "Shuffle ON";
+    shuffleBtn.classList.remove("bg-yellow-500");
+    shuffleBtn.classList.add("bg-green-500");
   } else {
     data = [...originalData];
     isShuffled = false;
+    shuffleBtn.innerText = "Shuffle";
+    shuffleBtn.classList.remove("bg-green-500");
+    shuffleBtn.classList.add("bg-yellow-500");
   }
 
   index = 0;
@@ -140,7 +149,6 @@ function shuffle(arr) {
 }
 
 render();
-
 </script>
 
 </body>
