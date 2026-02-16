@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kana Exam Mode</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+@keyframes fadeInKana {
+  0% { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.kana-animate {
+  animation: fadeInKana 0.3s ease-out;
+}
+</style>
+
+</head>
+
+<body class="bg-gradient-to-b from-indigo-700 to-purple-900 text-white min-h-screen flex flex-col">
+
+<header class="px-6 pt-8 pb-4">
+  <h1 class="text-2xl font-bold">Kana Exam Mode</h1>
+  <p class="text-sm opacity-80">Hiragana + Katakana Random</p>
+</header>
+
+<main class="flex-1 flex items-center justify-center px-4 pb-6">
+  <div id="examBox"
+       class="w-full max-w-xl
+              bg-white text-black
+              rounded-3xl shadow-2xl
+              p-6">
+  </div>
+</main>
+
+<script type="module">
+import { hiraganaData } from "./js/data/hiragana.js";
+import { katakanaData } from "./js/data/katakana.js";
+import { initKanaExam } from "./js/modules/kanaExamModule.js";
+
+const mixedData = [...hiraganaData, ...katakanaData];
+
+initKanaExam(mixedData, 60); // 60 detik
+</script>
+
+</body>
+</html>
