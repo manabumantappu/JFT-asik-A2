@@ -11,10 +11,9 @@ content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <style>
 html, body {
   height: 100%;
-  overflow: hidden;
 }
 
-.perspective { perspective: 1500px; }
+.perspective { perspective: 1400px; }
 
 .card-inner {
   transform-style: preserve-3d;
@@ -26,37 +25,29 @@ html, body {
 .card-face { backface-visibility: hidden; }
 
 .card-back { transform: rotateY(180deg); }
-
-/* Native safe area */
-.safe-top {
-  padding-top: env(safe-area-inset-top);
-}
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
 </style>
 </head>
 
-<body class="bg-gradient-to-b from-purple-600 to-indigo-700 text-white">
-
-<!-- FULL SCREEN CONTAINER -->
-<div class="h-screen flex flex-col safe-top safe-bottom">
+<body class="bg-gradient-to-b from-purple-600 to-indigo-700 text-white min-h-screen flex flex-col">
 
 <!-- HEADER -->
-<header class="px-6 pt-6 pb-4">
+<header class="px-6 pt-8 pb-4">
   <h1 class="text-2xl font-bold tracking-wide">
     Hiragana
   </h1>
 </header>
 
+<!-- MAIN -->
+<main class="flex-1 flex flex-col justify-between px-4">
+
 <!-- CARD AREA -->
-<div class="flex-1 flex items-center justify-center px-4">
+<div class="flex-1 flex items-center justify-center">
 
 <div class="perspective w-full flex justify-center">
 
   <div id="flashCard"
     class="card w-full max-w-xl
-           h-[70vh] sm:h-[550px]
+           h-[60vh] sm:h-[500px]
            cursor-pointer">
 
     <div class="card-inner w-full h-full relative">
@@ -68,7 +59,7 @@ html, body {
                   flex items-center justify-center">
 
         <span id="frontText"
-          class="text-[28vw] sm:text-9xl font-bold">
+          class="text-[24vw] sm:text-9xl font-bold">
         </span>
 
       </div>
@@ -80,7 +71,7 @@ html, body {
                   flex items-center justify-center">
 
         <span id="backText"
-          class="text-[14vw] sm:text-6xl font-bold tracking-wide">
+          class="text-[12vw] sm:text-6xl font-bold tracking-wide">
         </span>
 
       </div>
@@ -92,12 +83,12 @@ html, body {
 </div>
 </div>
 
-<!-- CONTROLS (Bottom Native Bar) -->
-<div class="px-6 pb-6 space-y-4">
+<!-- CONTROLS -->
+<div class="pb-6 space-y-4">
 
 <button onclick="prevKana()"
  class="w-full bg-white/20 backdrop-blur-md
-        py-4 rounded-2xl
+        py-3 rounded-2xl
         text-lg font-semibold
         active:scale-95 transition">
 ⬅ Prev
@@ -106,7 +97,7 @@ html, body {
 <button id="shuffleBtn"
  onclick="toggleShuffle()"
  class="w-full bg-yellow-400 text-black
-        py-4 rounded-2xl
+        py-3 rounded-2xl
         text-lg font-semibold
         active:scale-95 transition">
 🔀 Shuffle
@@ -114,7 +105,7 @@ html, body {
 
 <button onclick="nextKana()"
  class="w-full bg-white text-purple-700
-        py-4 rounded-2xl
+        py-3 rounded-2xl
         text-lg font-semibold
         active:scale-95 transition">
 Next ➡
@@ -122,7 +113,7 @@ Next ➡
 
 </div>
 
-</div>
+</main>
 
 <script type="module">
 import { hiraganaData } from "./js/data/hiragana.js";
