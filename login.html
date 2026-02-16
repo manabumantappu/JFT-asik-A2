@@ -1,33 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Manabu Mantappu</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
 
-<div class="bg-white p-6 rounded-2xl shadow w-80">
-  <h1 class="text-xl font-bold mb-4 text-center">Login</h1>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 to-gray-100">
 
-  <input id="email" type="email" placeholder="Email"
-  class="w-full p-3 border rounded-xl mb-3">
+<main class="flex-1 flex items-center justify-center p-6">
 
-  <input id="password" type="password" placeholder="Password"
-  class="w-full p-3 border rounded-xl mb-3">
+<div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-xl">
 
-  <button onclick="loginUser()"
-  class="w-full bg-blue-600 text-white py-3 rounded-xl">
+  <h2 class="text-2xl font-bold text-center mb-6">
     Login
-  </button>
+  </h2>
+
+  <form id="loginForm" class="space-y-4">
+
+    <!-- EMAIL -->
+    <input 
+      type="email" 
+      id="email"
+      placeholder="Email"
+      required
+      class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-blue-400 outline-none"
+    >
+
+    <!-- PASSWORD -->
+    <div class="relative">
+      <input 
+        type="password" 
+        id="password"
+        placeholder="Password"
+        required
+        class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-blue-400 outline-none"
+      >
+
+      <button 
+        type="button"
+        onclick="togglePassword()"
+        class="absolute right-4 top-4 text-gray-500 text-sm">
+        👁
+      </button>
+    </div>
+
+    <!-- BUTTON -->
+    <button 
+      type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 transition text-white p-4 rounded-xl font-semibold shadow">
+      Login
+    </button>
+
+  </form>
+
+  <!-- REGISTER LINK -->
+  <p class="text-center text-sm mt-6">
+    Belum punya akun? 
+    <a href="register.html" class="text-blue-600 font-semibold">
+      Register
+    </a>
+  </p>
+
 </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center text-sm text-gray-600 py-4">
+  © 2026 Manabu Mantappu
+</footer>
+
 
 <script type="module">
 import { auth } from "./js/firebase.js";
-import {
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { signInWithEmailAndPassword }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-window.loginUser = async () => {
+const form = document.getElementById("loginForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
@@ -37,6 +94,11 @@ window.loginUser = async () => {
   } catch (error) {
     alert("Login gagal: " + error.message);
   }
+});
+
+window.togglePassword = function() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
 };
 </script>
 
