@@ -4,24 +4,43 @@
 <title>Admin Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
 
-<div class="p-6">
-<h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
+<div class="p-6 space-y-6">
 
-<a href="add-question.html"
-class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-Tambah Soal
-</a>
+  <h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
 
-<a href="upload-vocab.html"
-class="bg-green-600 text-white px-4 py-2 rounded-xl inline-block mt-4">
-Upload Kosakata
-</a>
-  
+  <!-- MENU ACTION -->
+  <div class="space-x-2">
+    <a href="add-question.html"
+      class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+      Tambah Soal
+    </a>
+
+    <a href="upload-vocab.html"
+      class="bg-green-600 text-white px-4 py-2 rounded-xl">
+      Upload Kosakata
+    </a>
+  </div>
+
+
+  <!-- USER MANAGEMENT -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mt-8">
+    <h2 class="text-xl font-bold mb-4">
+      User & Admin Management
+    </h2>
+
+    <div id="userList" class="space-y-3">
+      Loading user...
+    </div>
+  </div>
+
 </div>
 
+<script type="module" src="../js/modules/adminUserModule.js"></script>
 <script type="module" src="../js/roleGuard.js"></script>
 <script type="module" src="../js/darkmode.js"></script>
+
 </body>
 </html>
