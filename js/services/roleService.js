@@ -6,9 +6,9 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-// Daftar email admin
+// Email yang otomatis jadi admin
 const ADMIN_EMAILS = [
-  "azishachigo@gmail.com"   // ← ganti dengan email kamu
+  "azishachigo@gmail.com"  // pastikan ini email login kamu
 ];
 
 export async function getUserRole() {
