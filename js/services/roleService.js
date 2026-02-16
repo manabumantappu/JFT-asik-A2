@@ -1,14 +1,39 @@
 import { db, auth } from "../firebase.js";
-import { doc, getDoc } from
-"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+// Daftar email admin
+const ADMIN_EMAILS = [
+  "azishachigo@gmail.com"   // ← ganti dengan email kamu
+];
 
 export async function getUserRole() {
-  const uid = auth.currentUser.uid;
-  const snap = await getDoc(doc(db, "users", uid));
 
-  if (snap.exists()) {
-    return snap.data().role;
+  const user = auth.currentUser;
+  if (!user) return "user";
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  // Jika belum ada document → buat otomatis
+  if (!snap.exists()) {
+
+    const role = ADMIN_EMAILS.includes(user.email)
+      ? "admin"
+      : "user";
+
+    await setDoc(userRef, {
+      email: user.email,
+      role: role,
+      createdAt: serverTimestamp()
+    });
+
+    return role;
   }
 
-  return "user";
+  return snap.data().role;
 }
