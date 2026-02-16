@@ -9,7 +9,7 @@ export function initKanaExam(data, duration = 60) {
   let timerInterval;
   let current;
 
- function startTimer() {
+function startTimer() {
 
   updateTimerDisplay();
 
@@ -35,12 +35,11 @@ function updateTimerDisplay() {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
-  timerEl.innerText =
+  timerEl.textContent =
     String(minutes).padStart(2, '0') +
     ":" +
     String(seconds).padStart(2, '0');
 }
-
 
   function nextQuestion() {
 
