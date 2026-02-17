@@ -92,13 +92,14 @@ import {
   deleteDoc,
   writeBatch
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-import { collection, getDocs } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const vocabList = document.getElementById("vocabList");
 const searchInput = document.getElementById("searchInput");
 const selectAll = document.getElementById("selectAll");
 const selectedCountEl = document.getElementById("selectedCount");
+const totalCountEl = document.getElementById("totalCount");
+const levelA2El = document.getElementById("levelA2");
+const lastUpdateEl = document.getElementById("lastUpdate");
 
 let allVocab = [];
 let selectedItems = new Set();
@@ -270,7 +271,32 @@ function detectDuplicates() {
       }
     });
 }
+function updateStats(snapshot) {
 
+  totalCountEl.innerText = snapshot.size;
+
+  const docs = snapshot.docs;
+
+  const a2Count = docs.filter(d => 
+    d.data().level === "A2"
+  ).length;
+
+  levelA2El.innerText = a2Count;
+
+  if (docs.length > 0) {
+
+    const latest = docs
+      .sort((a,b) =>
+        (b.data().createdAt?.seconds || 0) -
+        (a.data().createdAt?.seconds || 0)
+      )[0];
+
+    const date = latest.data().createdAt?.toDate();
+
+    lastUpdateEl.innerText =
+      date ? date.toLocaleDateString() : "-";
+  }
+}
 /* ================= SEARCH ================= */
 
 searchInput.addEventListener("input", () => {
@@ -287,9 +313,12 @@ searchInput.addEventListener("input", () => {
       v.kanji?.includes(keyword)
     );
 
-  renderVocab(filtered);
-  detectDuplicates();
+  renderVocab(allVocab);
+detectDuplicates();
+updateStats(snap);
 });
+
+  
 </script>
 
 
