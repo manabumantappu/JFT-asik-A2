@@ -95,43 +95,6 @@ import {
 import { collection, getDocs } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-import { db } from "../js/firebase.js";
-
-const totalBox = document.getElementById("totalVocab");
-const levelBox = document.getElementById("levelA2");
-const lastUpdateBox = document.getElementById("lastUpdate");
-
-async function loadStats() {
-
-  const snap = await getDocs(collection(db, "vocab"));
-
-  const total = snap.size;
-
-  totalBox.innerText = total;
-
-  // Hitung A2
-  const a2Count = snap.docs.filter(d => 
-    d.data().level === "A2"
-  ).length;
-
-  levelBox.innerText = a2Count;
-
-  // Last update
-  if (snap.docs.length > 0) {
-    const latest = snap.docs
-      .sort((a,b) => 
-        b.data().createdAt?.seconds - a.data().createdAt?.seconds
-      )[0];
-
-    const date = latest.data().createdAt?.toDate();
-
-    lastUpdateBox.innerText =
-      date ? date.toLocaleDateString() : "-";
-  }
-}
-
-loadStats();
-
 const vocabList = document.getElementById("vocabList");
 const searchInput = document.getElementById("searchInput");
 const selectAll = document.getElementById("selectAll");
