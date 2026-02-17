@@ -8,6 +8,20 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+import { updateDoc, doc } from 
+"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { db } from "../firebase.js";
+
+export async function toggleDisable(uid, currentStatus) {
+
+  await updateDoc(doc(db, "users", uid), {
+    disabled: !currentStatus
+  });
+
+  alert("Status akun diperbarui");
+  location.reload();
+}
+
 // Tambah soal
 export async function addQuestion(data) {
   await addDoc(collection(db, "questions"), {
