@@ -117,6 +117,7 @@ async function loadVocab() {
 
   renderVocab(allVocab);
   detectDuplicates();
+  updateStats(snap); // 🔥 TAMBAH INI
 }
 
 loadVocab();
@@ -306,17 +307,16 @@ searchInput.addEventListener("input", () => {
 
   const filtered =
     allVocab.filter(v =>
-      v.romaji?.toLowerCase()
-        .includes(keyword) ||
-      v.arti?.toLowerCase()
-        .includes(keyword) ||
+      v.romaji?.toLowerCase().includes(keyword) ||
+      v.arti?.toLowerCase().includes(keyword) ||
       v.kanji?.includes(keyword)
     );
 
-  renderVocab(allVocab);
-detectDuplicates();
-updateStats(snap);
+  renderVocab(filtered);
+  detectDuplicates();
+
 });
+
 
   
 </script>
