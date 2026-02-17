@@ -72,6 +72,11 @@
     </div>
     
     <div id="userList" class="space-y-4">
+      <button onclick="loadUsers(false)"
+class="mt-6 w-full bg-white/10 py-3 rounded-xl hover:bg-white/20 transition">
+Load More
+</button>
+
       <!-- Skeleton Loading -->
       <div class="animate-pulse bg-white/10 h-16 rounded-xl"></div>
       <div class="animate-pulse bg-white/10 h-16 rounded-xl"></div>
@@ -96,15 +101,56 @@ const searchInput = document.getElementById("searchUser");
 
 let allUsers = [];
 
-async function loadUsers() {
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  userList.innerHTML = "";
+let lastDoc = null;
+let pageSize = 20;
 
-  const snap = await getDocs(collection(db, "users"));
-  allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+async function loadUsers(firstLoad = true) {
 
-  renderUsers(allUsers);
+  if (firstLoad) {
+    userList.innerHTML = "";
+    lastDoc = null;
+  }
+
+  let q;
+
+  if (lastDoc) {
+    q = query(
+      collection(db, "users"),
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  } else {
+    q = query(
+      collection(db, "users"),
+      orderBy("createdAt", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  const snap = await getDocs(q);
+
+  if (!snap.empty) {
+    lastDoc = snap.docs[snap.docs.length - 1];
+  }
+
+  const users = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+
+  renderUsers(users);
 }
+
 
 function renderUsers(users) {
 
