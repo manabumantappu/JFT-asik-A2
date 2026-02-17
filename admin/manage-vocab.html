@@ -20,7 +20,26 @@
 </header>
 
 <main class="max-w-6xl mx-auto px-4 py-8">
+ <!-- STATISTICS -->
+  <div class="grid sm:grid-cols-3 gap-4 mb-8">
 
+    <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+      <div class="text-sm text-gray-400">Total Kosakata</div>
+      <div id="totalCount" class="text-3xl font-bold mt-2">0</div>
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+      <div class="text-sm text-gray-400">Level A2</div>
+      <div id="levelA2" class="text-3xl font-bold mt-2">0</div>
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+      <div class="text-sm text-gray-400">Last Update</div>
+      <div id="lastUpdate" class="text-lg font-semibold mt-2">-</div>
+    </div>
+
+  </div>
+  
   <!-- SEARCH -->
   <div class="mb-6">
     <input id="searchInput"
@@ -61,6 +80,10 @@ import {
 const vocabList = document.getElementById("vocabList");
 const searchInput = document.getElementById("searchInput");
 
+const totalCountEl = document.getElementById("totalCount");
+const levelA2El = document.getElementById("levelA2");
+const lastUpdateEl = document.getElementById("lastUpdate");
+
 let allVocab = [];
 let lastDoc = null;
 const pageSize = 20;
@@ -75,67 +98,77 @@ window.loadVocab = async function(reset = true) {
     allVocab = [];
   }
 
-  let q;
-
-  if (lastDoc) {
-    q = query(
-      collection(db, "vocab"),
-      orderBy("createdAt", "desc"),
-      startAfter(lastDoc),
-      limit(pageSize)
-    );
-  } else {
-    q = query(
-      collection(db, "vocab"),
-      orderBy("createdAt", "desc"),
-      limit(pageSize)
-    );
-  }
+  const q = query(
+    collection(db, "vocab"),
+    orderBy("createdAt", "desc"),
+    limit(1000) // ambil banyak untuk statistik
+  );
 
   const snap = await getDocs(q);
-  if (snap.empty) return;
 
-  lastDoc = snap.docs[snap.docs.length - 1];
+  if (snap.empty) return;
 
   const data = snap.docs.map(d => ({
     id: d.id,
     ...d.data()
   }));
 
-  allVocab = [...allVocab, ...data];
+  allVocab = data;
 
-  renderVocab(allVocab);
+  updateStats(data);
+  renderVocab(data.slice(0, pageSize));
 };
+
+
+/* ================= STATISTICS ================= */
+
+function updateStats(data) {
+
+  totalCountEl.innerText = data.length;
+
+  const a2 = data.filter(v => v.level === "A2").length;
+  levelA2El.innerText = a2;
+
+  const latest = data[0]?.createdAt?.toDate?.();
+  if (latest) {
+    lastUpdateEl.innerText =
+      latest.toLocaleDateString();
+  }
+}
 
 
 /* ================= RENDER ================= */
 
 function renderVocab(data) {
 
-  if (data.length === 0) {
-    vocabList.innerHTML = `<div class="text-center text-gray-400 py-6">No vocab found</div>`;
-    return;
-  }
-
   vocabList.innerHTML = data.map(item => `
     <div class="bg-white/10 border border-white/10
-                rounded-2xl p-5 flex flex-col sm:flex-row
-                justify-between gap-4">
+                rounded-2xl p-5 space-y-3">
 
-      <div>
-        <div class="text-lg font-semibold">
-          ${item.kanji || "-"}
-        </div>
-        <div class="text-sm text-gray-400">
-          ${item.romaji} — ${item.arti}
-        </div>
+      <div class="grid sm:grid-cols-3 gap-3">
+
+        <input id="kanji-${item.id}"
+          value="${item.kanji || ""}"
+          class="bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2">
+
+        <input id="romaji-${item.id}"
+          value="${item.romaji}"
+          class="bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2">
+
+        <input id="arti-${item.id}"
+          value="${item.arti}"
+          class="bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2">
+
       </div>
 
       <div class="flex gap-2">
 
-        <button onclick="editVocab('${item.id}','${item.kanji}','${item.romaji}','${item.arti}')"
+        <button onclick="saveVocab('${item.id}')"
           class="bg-indigo-600 px-4 py-2 rounded-xl text-sm">
-          Edit
+          Save
         </button>
 
         <button onclick="deleteVocab('${item.id}')"
@@ -150,23 +183,21 @@ function renderVocab(data) {
 }
 
 
-/* ================= EDIT ================= */
+/* ================= INLINE SAVE ================= */
 
-window.editVocab = async (id, kanji, romaji, arti) => {
+window.saveVocab = async (id) => {
 
-  const newKanji = prompt("Kanji:", kanji);
-  const newRomaji = prompt("Romaji:", romaji);
-  const newArti = prompt("Arti:", arti);
-
-  if (!newRomaji || !newArti) return;
+  const kanji = document.getElementById(`kanji-${id}`).value;
+  const romaji = document.getElementById(`romaji-${id}`).value;
+  const arti = document.getElementById(`arti-${id}`).value;
 
   await updateDoc(doc(db, "vocab", id), {
-    kanji: newKanji,
-    romaji: newRomaji,
-    arti: newArti
+    kanji,
+    romaji,
+    arti
   });
 
-  loadVocab(true);
+  alert("Updated!");
 };
 
 
@@ -199,8 +230,8 @@ searchInput.addEventListener("input", () => {
 
 
 loadVocab(true);
-
 </script>
+
 
 <script type="module" src="../js/roleGuard.js"></script>
 
