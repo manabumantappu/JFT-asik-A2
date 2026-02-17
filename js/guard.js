@@ -1,35 +1,38 @@
 import { auth } from "./firebase.js";
-import { onAuthStateChanged } from
+import { onAuthStateChanged, signOut } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-   window.location.href = "login.html";
-  }
-});
 import { doc, getDoc } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-import { db, auth } from "./firebase.js";
-import { signOut } from
-"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-auth.onAuthStateChanged(async (user) => {
+import { db } from "./firebase.js";
 
+
+onAuthStateChanged(auth, async (user) => {
+
+  // 🔐 Belum login
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  const snap = await getDoc(doc(db, "users", user.uid));
+  try {
 
-  if (snap.exists()) {
-    const data = snap.data();
+    const snap = await getDoc(doc(db, "users", user.uid));
 
-    if (data.disabled === true) {
-      alert("Akun Anda dinonaktifkan oleh Admin.");
-      await signOut(auth);
-      window.location.href = "login.html";
+    if (snap.exists()) {
+      const data = snap.data();
+
+      // 🚫 Jika akun di-disable
+      if (data.disabled === true) {
+        alert("Akun Anda dinonaktifkan oleh Admin.");
+        await signOut(auth);
+        window.location.href = "login.html";
+      }
     }
+
+  } catch (error) {
+    console.error("Guard error:", error);
   }
 
 });
