@@ -106,7 +106,7 @@ let selectedItems = new Set();
 
 /* ================= LOAD ================= */
 
-async function loadVocab() {
+window.loadVocab = async function() {
 
   const snap = await getDocs(collection(db, "vocab"));
 
