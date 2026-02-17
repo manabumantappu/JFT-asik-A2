@@ -49,6 +49,25 @@
              rounded-xl px-4 py-3
              focus:outline-none focus:ring-2 focus:ring-purple-500">
   </div>
+<!-- BULK TOOLBAR -->
+<div class="flex flex-col sm:flex-row gap-4 mb-6">
+
+  <div class="flex items-center gap-3">
+    <input type="checkbox" id="selectAll"
+      class="w-5 h-5">
+    <label for="selectAll">Select All</label>
+  </div>
+
+  <button onclick="bulkDelete()"
+    class="bg-red-600 px-5 py-2 rounded-xl text-sm">
+    🗑 Delete Selected
+  </button>
+
+  <div class="text-sm text-gray-400">
+    Selected: <span id="selectedCount">0</span>
+  </div>
+
+</div>
 
   <!-- LIST -->
   <div id="vocabList" class="space-y-4"></div>
@@ -67,169 +86,208 @@
 import { db } from "../js/firebase.js";
 import {
   collection,
-  query,
-  orderBy,
-  limit,
-  startAfter,
   getDocs,
   doc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const vocabList = document.getElementById("vocabList");
 const searchInput = document.getElementById("searchInput");
-
-const totalCountEl = document.getElementById("totalCount");
-const levelA2El = document.getElementById("levelA2");
-const lastUpdateEl = document.getElementById("lastUpdate");
+const selectAll = document.getElementById("selectAll");
+const selectedCountEl = document.getElementById("selectedCount");
 
 let allVocab = [];
-let lastDoc = null;
-const pageSize = 20;
+let selectedItems = new Set();
 
 /* ================= LOAD ================= */
 
-window.loadVocab = async function(reset = true) {
+async function loadVocab() {
 
-  if (reset) {
-    vocabList.innerHTML = "";
-    lastDoc = null;
-    allVocab = [];
-  }
+  const snap = await getDocs(collection(db, "vocab"));
 
-  const q = query(
-    collection(db, "vocab"),
-    orderBy("createdAt", "desc"),
-    limit(1000) // ambil banyak untuk statistik
-  );
-
-  const snap = await getDocs(q);
-
-  if (snap.empty) return;
-
-  const data = snap.docs.map(d => ({
+  allVocab = snap.docs.map(d => ({
     id: d.id,
     ...d.data()
   }));
 
-  allVocab = data;
-
-  updateStats(data);
-  renderVocab(data.slice(0, pageSize));
-};
-
-
-/* ================= STATISTICS ================= */
-
-function updateStats(data) {
-
-  totalCountEl.innerText = data.length;
-
-  const a2 = data.filter(v => v.level === "A2").length;
-  levelA2El.innerText = a2;
-
-  const latest = data[0]?.createdAt?.toDate?.();
-  if (latest) {
-    lastUpdateEl.innerText =
-      latest.toLocaleDateString();
-  }
+  renderVocab(allVocab);
+  detectDuplicates();
 }
 
+loadVocab();
 
 /* ================= RENDER ================= */
 
 function renderVocab(data) {
 
   vocabList.innerHTML = data.map(item => `
-    <div class="bg-white/10 border border-white/10
-                rounded-2xl p-5 space-y-3">
+    <div class="vocab-item bg-white/10 border border-white/10
+                rounded-2xl p-5 space-y-3"
+         data-romaji="${item.romaji?.toLowerCase()}">
 
-      <div class="grid sm:grid-cols-3 gap-3">
+      <div class="flex justify-between items-center">
 
-        <input id="kanji-${item.id}"
-          value="${item.kanji || ""}"
-          class="bg-white/10 border border-white/20
-                 rounded-xl px-3 py-2">
+        <div class="flex items-center gap-3">
+          <input type="checkbox"
+            class="vocabCheckbox w-5 h-5"
+            data-id="${item.id}">
+          <div class="font-semibold">
+            ${item.kanji || "-"}
+          </div>
+        </div>
 
-        <input id="romaji-${item.id}"
-          value="${item.romaji}"
-          class="bg-white/10 border border-white/20
-                 rounded-xl px-3 py-2">
-
-        <input id="arti-${item.id}"
-          value="${item.arti}"
-          class="bg-white/10 border border-white/20
-                 rounded-xl px-3 py-2">
+        <div class="text-sm text-gray-400">
+          ${item.romaji} — ${item.arti}
+        </div>
 
       </div>
 
       <div class="flex gap-2">
-
-        <button onclick="saveVocab('${item.id}')"
-          class="bg-indigo-600 px-4 py-2 rounded-xl text-sm">
-          Save
-        </button>
-
-        <button onclick="deleteVocab('${item.id}')"
+        <button onclick="deleteSingle('${item.id}')"
           class="bg-red-600 px-4 py-2 rounded-xl text-sm">
           Delete
         </button>
-
       </div>
 
     </div>
   `).join("");
+
+  attachCheckboxEvents();
 }
 
+/* ================= CHECKBOX ================= */
 
-/* ================= INLINE SAVE ================= */
+function attachCheckboxEvents() {
 
-window.saveVocab = async (id) => {
+  const checkboxes =
+    document.querySelectorAll(".vocabCheckbox");
 
-  const kanji = document.getElementById(`kanji-${id}`).value;
-  const romaji = document.getElementById(`romaji-${id}`).value;
-  const arti = document.getElementById(`arti-${id}`).value;
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
 
-  await updateDoc(doc(db, "vocab", id), {
-    kanji,
-    romaji,
-    arti
+      const id = cb.dataset.id;
+
+      if (cb.checked) {
+        selectedItems.add(id);
+      } else {
+        selectedItems.delete(id);
+      }
+
+      selectedCountEl.innerText =
+        selectedItems.size;
+    });
+  });
+}
+
+/* SELECT ALL */
+selectAll.addEventListener("change", () => {
+
+  const checkboxes =
+    document.querySelectorAll(".vocabCheckbox");
+
+  checkboxes.forEach(cb => {
+    cb.checked = selectAll.checked;
+
+    if (selectAll.checked) {
+      selectedItems.add(cb.dataset.id);
+    } else {
+      selectedItems.clear();
+    }
   });
 
-  alert("Updated!");
+  selectedCountEl.innerText =
+    selectedItems.size;
+});
+
+/* ================= BULK DELETE ================= */
+
+window.bulkDelete = async () => {
+
+  if (selectedItems.size === 0) {
+    alert("Tidak ada yang dipilih");
+    return;
+  }
+
+  if (!confirm(
+    `Hapus ${selectedItems.size} kosakata?`
+  )) return;
+
+  const batch = writeBatch(db);
+
+  selectedItems.forEach(id => {
+    batch.delete(doc(db, "vocab", id));
+  });
+
+  await batch.commit();
+
+  selectedItems.clear();
+  selectAll.checked = false;
+
+  loadVocab();
 };
 
+/* ================= SINGLE DELETE ================= */
 
-/* ================= DELETE ================= */
-
-window.deleteVocab = async (id) => {
+window.deleteSingle = async (id) => {
 
   if (!confirm("Delete vocab?")) return;
 
   await deleteDoc(doc(db, "vocab", id));
-
-  loadVocab(true);
+  loadVocab();
 };
 
+/* ================= DUPLICATE DETECTION ================= */
+
+function detectDuplicates() {
+
+  const seen = new Map();
+
+  document
+    .querySelectorAll(".vocab-item")
+    .forEach(item => {
+
+      const romaji =
+        item.dataset.romaji;
+
+      if (!romaji) return;
+
+      if (seen.has(romaji)) {
+        item.classList.add(
+          "border-red-500",
+          "bg-red-500/10"
+        );
+        seen.get(romaji)
+          .classList.add(
+            "border-red-500",
+            "bg-red-500/10"
+          );
+      } else {
+        seen.set(romaji, item);
+      }
+    });
+}
 
 /* ================= SEARCH ================= */
 
 searchInput.addEventListener("input", () => {
 
-  const keyword = searchInput.value.toLowerCase();
+  const keyword =
+    searchInput.value.toLowerCase();
 
-  const filtered = allVocab.filter(v =>
-    v.romaji?.toLowerCase().includes(keyword) ||
-    v.arti?.toLowerCase().includes(keyword) ||
-    v.kanji?.includes(keyword)
-  );
+  const filtered =
+    allVocab.filter(v =>
+      v.romaji?.toLowerCase()
+        .includes(keyword) ||
+      v.arti?.toLowerCase()
+        .includes(keyword) ||
+      v.kanji?.includes(keyword)
+    );
 
   renderVocab(filtered);
+  detectDuplicates();
 });
-
-
-loadVocab(true);
 </script>
 
 
