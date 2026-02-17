@@ -122,7 +122,13 @@ window.toggleMode = function () {
 };
 
 // ================= QUIZ MODE =================
+// ================= QUIZ MODE =================
 window.startQuizFromVocab = function () {
+
+  renderQuizQuestion();
+};
+
+function renderQuizQuestion() {
 
   const question = vocabData[currentIndex];
 
@@ -139,29 +145,34 @@ window.startQuizFromVocab = function () {
 
       ${choices.map(choice => `
         <button 
-          class="block w-full bg-gray-200 p-3 rounded-xl mb-2"
-          onclick="checkAnswer('${choice.replace(/'/g, "\\'")}')">
+          class="quiz-option block w-full bg-gray-100 text-black p-3 rounded-xl mb-2 transition"
+          data-answer="${choice.replace(/"/g, "&quot;")}"
+          onclick="checkAnswer(this)">
           ${choice}
         </button>
       `).join("")}
     </div>
   `;
-};
-function checkAnswer(button, selected, correct) {
+}
+
+window.checkAnswer = function(button) {
+
+  const correct = vocabData[currentIndex].arti;
+  const selected = button.dataset.answer;
 
   const buttons = document.querySelectorAll(".quiz-option");
 
-  // Disable semua tombol setelah klik
+  // Disable semua tombol
   buttons.forEach(btn => btn.disabled = true);
 
   if (selected === correct) {
 
-    button.classList.remove("bg-gray-200");
+    button.classList.remove("bg-gray-100");
     button.classList.add("bg-green-500", "text-white");
 
   } else {
 
-    button.classList.remove("bg-gray-200");
+    button.classList.remove("bg-gray-100");
     button.classList.add("bg-red-500", "text-white");
 
     // Highlight jawaban benar
@@ -172,11 +183,13 @@ function checkAnswer(button, selected, correct) {
     });
   }
 
-  // Auto lanjut
+  // Auto lanjut ke soal berikutnya
   setTimeout(() => {
-    loadNextQuestion();
+    currentIndex = (currentIndex + 1) % vocabData.length;
+    renderQuizQuestion();
   }, 800);
-}
+};
+
 
 // ================= HELPERS =================
 function getRandomChoices(correct) {
