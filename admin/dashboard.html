@@ -78,10 +78,7 @@
     </div>
 
   </div>
-<button onclick="toggleDisable('${uid}', ${user.disabled || false})"
- class="bg-red-500 text-white px-3 py-1 rounded">
-  ${user.disabled ? "Aktifkan" : "Disable"}
-</button>
+
 </main>
 
 <script type="module">
@@ -120,51 +117,61 @@ function renderUsers(users) {
     return;
   }
 
-  userList.innerHTML = users.map(user => `
-    <div class="bg-white/10 backdrop-blur-md
-                border border-white/10
-                rounded-2xl p-5
-                flex flex-col sm:flex-row
-                sm:items-center justify-between
-                gap-4
-                transition hover:bg-white/20">
+  userList.innerHTML = users.map(user => {
 
-      <div>
-        <div class="font-semibold text-lg">
-          ${user.email}
+    const isDisabled = user.disabled === true;
+    const role = user.role || "user";
+
+    return `
+      <div class="bg-white/10 backdrop-blur-md
+                  border border-white/10
+                  rounded-2xl p-5
+                  flex flex-col sm:flex-row
+                  sm:items-center justify-between
+                  gap-4
+                  transition hover:bg-white/20">
+
+        <div>
+          <div class="font-semibold text-lg">
+            ${user.email}
+          </div>
+
+          <div class="text-sm text-gray-400">
+            Role: ${role}
+          </div>
+
+          <div class="text-sm mt-1">
+            ${isDisabled
+              ? '<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-lg text-xs">Disabled</span>'
+              : '<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-lg text-xs">Active</span>'
+            }
+          </div>
         </div>
-        <div class="text-sm text-gray-400">
-          Role: ${user.role || "user"}
+
+        <div class="flex flex-wrap gap-2">
+
+          <button onclick="toggleRole('${user.id}','${role}')"
+            class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm transition">
+            Toggle Role
+          </button>
+
+          <button onclick="toggleDisable('${user.id}', ${isDisabled})"
+            class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-xl text-sm text-black transition">
+            ${isDisabled ? "Enable" : "Disable"}
+          </button>
+
+          <button onclick="deleteUser('${user.id}')"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition">
+            Delete
+          </button>
+
         </div>
-        <div class="text-sm mt-1">
-          ${user.disabled 
-            ? '<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-lg text-xs">Disabled</span>' 
-            : '<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-lg text-xs">Active</span>'}
-        </div>
+
       </div>
-
-      <div class="flex flex-wrap gap-2">
-
-        <button onclick="toggleRole('${user.id}','${user.role}')"
-          class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm transition">
-          Toggle Role
-        </button>
-
-        <button onclick="toggleDisable('${user.id}', ${user.disabled || false})"
-          class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-xl text-sm text-black transition">
-          ${user.disabled ? "Enable" : "Disable"}
-        </button>
-
-        <button onclick="deleteUser('${user.id}')"
-          class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition">
-          Delete
-        </button>
-
-      </div>
-
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
+
 
 window.toggleRole = async (id, role) => {
   await updateDoc(doc(db, "users", id), {
@@ -196,6 +203,8 @@ searchInput.addEventListener("input", () => {
 
 loadUsers();
 </script>
-
+  
+<script type="module" src="../js/roleGuard.js"></script>
+  
 </body>
 </html>
